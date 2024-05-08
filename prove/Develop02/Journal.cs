@@ -1,3 +1,44 @@
-Date: 02/05/2024 21:52:23, Prompt: What's something I'm looking forward to tomorrow?, Response: school
-Date: 02/05/2024 21:52:38, Prompt: What's something I'm proud of accomplishing recently?, Response: school
-Date: 02/05/2024 21:52:48, Prompt: How did I see the hand of the Lord in my life today?, Response: many ways
+public class Journal
+{
+    private List<Entry> entries = new List<Entry>();
+
+    public void AddEntry(Entry entry)
+    {
+        entries.Add(entry);
+    }
+
+    public List<Entry> GetEntries()
+    {
+        return entries;
+    }
+
+    public void SaveToFile(string filename)
+    {
+        using (StreamWriter writer = new StreamWriter(filename))
+        {
+            foreach (var entry in entries)
+            {
+                writer.WriteLine($"Date: {entry.Date}, Prompt: {entry.Prompt}, Response: {entry.Response}");
+            }
+        }
+    }
+     public void LoadFromFile(string filename)
+    {
+        entries = new List<Entry>();
+        if (File.Exists(filename))
+        {
+            using (StreamReader reader = new StreamReader(filename))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    string[] parts = line.Split(',');
+                    Entry entry = new Entry(parts[1].Trim(), parts[2].Trim());
+                    entry.Date = DateTime.Parse(parts[0].Trim().Substring(5));
+                    entries.Add(entry);
+                }
+            }
+        }
+    }
+}
+

@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 public class PromptGenerator
+
 {
     private List<string> prompts = new List<string>()
     {
