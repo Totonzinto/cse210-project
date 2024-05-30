@@ -1,0 +1,15 @@
+public class EternalGoal : Goal
+{
+    public EternalGoal(string description, int points) : base(description, points) { }
+
+    public override void RecordEvent()
+    {
+        // Eternal goals are never completed, only points are awarded
+        Points += 100;
+    }
+
+    public override string GetStatus()
+    {
+        return "[∞]";
+    }
+}

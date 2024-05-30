@@ -1,0 +1,86 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+
+
+public class GoalManager
+{
+    private List<Goal> goals;
+    public int TotalPoints { get; private set; }
+
+    public GoalManager()
+    {
+        goals = new List<Goal>();
+        TotalPoints = 0;
+    }
+
+    public void AddGoal(Goal goal)
+    {
+        goals.Add(goal);
+    }
+
+    public void RecordEvent(string description)
+    {
+        var goal = goals.FirstOrDefault(g => g.Description == description);
+        if (goal != null)
+        {
+            goal.RecordEvent();
+            TotalPoints += goal.Points;
+        }
+    }
+
+    public void DisplayGoals() //display goals
+    {
+        foreach (var goal in goals)
+        {
+            Console.WriteLine($"{goal.GetStatus()} {goal.Description}");
+        }
+    }
+
+    public void SaveGoals(string filename) //save goals
+    {
+        using (StreamWriter writer = new StreamWriter(filename))
+        {
+            writer.WriteLine(TotalPoints);
+            foreach (var goal in goals)
+            {
+                writer.WriteLine($"{goal.GetType().Name},{goal.Description},{goal.Points},{goal.IsCompleted},{(goal is ChecklistGoal checklist ? $"{checklist.CurrentCount},{checklist.TargetCount},{checklist.BonusPoints}" : "")}");
+            }
+        }
+    }
+
+    public void LoadGoals(string filename) //load goals
+    {
+        if (!File.Exists(filename))
+            return;
+
+        using (StreamReader reader = new StreamReader(filename))
+        {
+            TotalPoints = int.Parse(reader.ReadLine());
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                var parts = line.Split(',');
+                Goal goal = null;
+                switch (parts[0])
+                {
+                    case "SimpleGoal":
+                        goal = new SimpleGoal(parts[1], int.Parse(parts[2])) { IsCompleted = bool.Parse(parts[3]) };
+                        break;
+                    case "EternalGoal":
+                        goal = new EternalGoal(parts[1], int.Parse(parts[2]));
+                        break;
+                    case "ChecklistGoal":
+                        goal = new ChecklistGoal(parts[1], int.Parse(parts[2]), int.Parse(parts[5]), int.Parse(parts[6]))
+                        {
+                            IsCompleted = bool.Parse(parts[3]),
+                            CurrentCount = int.Parse(parts[4])
+                        };
+                        break;
+                }
+                if (goal != null)
+                    goals.Add(goal);
+            }
+        }
+    }
+}

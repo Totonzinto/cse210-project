@@ -1,0 +1,15 @@
+public class SimpleGoal : Goal
+{
+    public SimpleGoal(string description, int points) : base(description, points) { }
+
+    
+    public override void RecordEvent() //record to show if gaol is complete or not
+    {
+        IsCompleted = true;
+    }
+
+    public override string GetStatus() //display goal status
+    {
+        return IsCompleted ? "[X]" : "[ ]";
+    }
+}

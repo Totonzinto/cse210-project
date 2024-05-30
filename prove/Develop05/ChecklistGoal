@@ -1,0 +1,29 @@
+public class ChecklistGoal : Goal
+{
+    public int TargetCount { get; set; }
+    public int CurrentCount { get; set; }
+    public int BonusPoints { get; set; }
+
+    public ChecklistGoal(string description, int points, int targetCount, int bonusPoints)
+        : base(description, points)
+    {
+        TargetCount = targetCount;
+        CurrentCount = 0;
+        BonusPoints = bonusPoints;
+    }
+
+    public override void RecordEvent()
+    {
+        CurrentCount++;
+        if (CurrentCount >= TargetCount)
+        {
+            IsCompleted = true;
+            Points += BonusPoints;
+        }
+    }
+
+    public override string GetStatus()
+    {
+        return IsCompleted ? $"[X] Completed {CurrentCount}/{TargetCount}" : $"[ ] Completed {CurrentCount}/{TargetCount}";
+    }
+}
